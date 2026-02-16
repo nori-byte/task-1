@@ -19,9 +19,27 @@
         <div class="product-info">
             <a :href="link"> More products like this</a>
             <h1>{{product}}</h1>
+            <p v-if="inStock">In stock</p>
+            <p v-else>Out of Stock</p>
+            <span v-show="onSale">On Sale</span>
         </div>
     </div>
     <p>{{description}}</p>
+    <ul>
+        <li v-for="detail in detalis">{{detail}}</li>
+    </ul>
+    <div v-for="variant in variants" :key="variant.variantId">
+        <p>{{ variant.variantColor }}</p>
+    </div>
+    <ul>
+    <li v-for="size in sizes">{{size}}</li>
+    </ul>
+    <div class="cart">
+        <p>Cart({{cart}})</p>
+    </div>
+<!--    <button v-on:click="cart += 1">Add to cart</button>-->
+    <button v-on:click="addToCart">Add to cart</button>
+
 </div>
 </body>
 </html>
