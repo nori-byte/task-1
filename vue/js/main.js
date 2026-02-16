@@ -30,7 +30,15 @@ let app = new Vue({
     },
     methods: {
         addToCart() {
-            this.cart +=1
-        }
+            this.cart += 1
+        },
+        deleteToCart() {
+            this.cart -= 1
+        },
+        updateProduct(variantImage) {
+            this.image = variantImage
+        },
+
     }
 })
+
