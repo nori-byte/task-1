@@ -5,8 +5,12 @@ Vue.component('product', {
             type: Boolean,
             required: true
 
+        },
+        methods: {
+            addToCart() {
+                this.$emit('add-to-cart');
+            }
         }
-
     },
     template: `
  <div class="product">
@@ -25,9 +29,6 @@ Vue.component('product', {
     <ul>
     <li v-for="size in sizes">{{size}}</li>
     </ul>
-    <div class="cart">
-        <p>Cart({{cart}})</p>
-    </div>
     <button v-on:click="deleteToCart">Delete to cart</button>
     <div v-for="variant in variants" :key="variant.variantId">
     </div>
@@ -52,8 +53,8 @@ Vue.component('product', {
 </div>
 `,
 
- 
-        data() {
+
+    data() {
         return {
             product: "Socks",
             brand: 'Vue Mastery',
@@ -83,22 +84,23 @@ Vue.component('product', {
                 }
             ],
             sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
-            cart: 0,
         }
     },
     methods: {
-        addToCart() {
-            this.cart += 1
-        },
+        // addToCart() {
+        //     this.$emit('add-to-cart',
+        //     this.variants[this.selectedVariant].variantId);
+        // },
         deleteToCart() {
             this.cart -= 1
         },
         updateProduct(index) {
             this.selectedVariant = index;
             console.log(index);
-        }
+        },
     },
-        computed: {
+
+    computed: {
             title() {
                 return this.brand + ' ' + this.product;
             },
@@ -134,8 +136,17 @@ let app = new Vue({
     el: '#app',
     data: {
         premium: true,
-        details:true,
+        details: true,
+        cart: 0,
+    },
+    methods: {
+        updateCart() {
+            this.cart += 1;
+        }
     }
 })
+
+
+
 
 
