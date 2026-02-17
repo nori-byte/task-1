@@ -5,11 +5,6 @@ Vue.component('product', {
             type: Boolean,
             required: true
 
-        },
-        methods: {
-            addToCart() {
-                this.$emit('add-to-cart');
-            }
         }
     },
     template: `
@@ -29,7 +24,7 @@ Vue.component('product', {
     <ul>
     <li v-for="size in sizes">{{size}}</li>
     </ul>
-    <button v-on:click="deleteToCart">Delete to cart</button>
+    <button v-on:click="removeToCart">Remove to cart</button>
     <div v-for="variant in variants" :key="variant.variantId">
     </div>
 
@@ -71,14 +66,14 @@ Vue.component('product', {
                     variantColor: 'green',
                     variantImage: "./assets/vmSocks-green-onWhite.jpg",
                     variantQuantity: 10,
-                    // variantSale: 'sale',
+
                 },
                 {
                     variantId: 2235,
                     variantColor: 'blue',
                     variantImage: "./assets/vmSocks-blue-onWhite.jpg",
                     variantQuantity: 0,
-                    // variantSale: 'Not sale',
+
 
 
                 }
@@ -87,12 +82,12 @@ Vue.component('product', {
         }
     },
     methods: {
-        // addToCart() {
-        //     this.$emit('add-to-cart',
-        //     this.variants[this.selectedVariant].variantId);
-        // },
-        deleteToCart() {
-            this.cart -= 1
+        addToCart() {
+            this.$emit('add-to-cart',
+                this.variants[this.selectedVariant].variantId);
+        },
+        removeToCart() {
+            this.$emit('remove-to-cart');
         },
         updateProduct(index) {
             this.selectedVariant = index;
@@ -136,12 +131,15 @@ let app = new Vue({
     el: '#app',
     data: {
         premium: true,
-        details: true,
-        cart: 0,
+        details:true,
+        cart: [],
     },
     methods: {
-        updateCart() {
-            this.cart += 1;
+        updateCart(id) {
+            this.cart.push(id);
+        },
+        removeToCart() {
+            this.cart.pop();
         }
     }
 })
