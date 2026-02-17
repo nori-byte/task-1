@@ -1,5 +1,40 @@
 let eventBus = new Vue()
 
+Vue.component('cart', {
+    props: {
+        cartItems: {
+            type: Array,
+            required: true
+        },
+        premium: {
+            type:Boolean,
+            required: true
+        },
+        products: {
+            type: Array,
+            required: true
+        }
+    },
+    template: `
+     <div class="cart">
+     <h2>Корзинка</h2>
+     <div v-for="(id,index) in cartItems :key=index class="cart-item">
+<!--     <img :src="variant.variantImage" class="cart-image">-->
+        <p>{{variantImage}}</p>
+        <p>{{variantQuantity}}</p>
+        <p>{{price}}</p>
+        <p>{{shipping}}</p>
+     </div>
+     <p>Details: {{ details }}</p>
+</div>
+`,
+    data() {
+        return {
+            price:25
+        }
+    },
+});
+
 Vue.component('product-tabs', {
     props: {
         reviews: {
@@ -155,7 +190,6 @@ Vue.component('product', {
         </div>
         <div class="product-info">
             <h1>{{ title }}</h1>
-<!--            <p>Shipping: {{ shipping }}</p>-->
             <a :href="link"> More products like this</a>
             <p v-if="inStock">In stock</p>
             <p v-else :class="{ outOfStock: !inStock || inventory <= 0 }">Out of Stock</p>
@@ -179,7 +213,7 @@ Vue.component('product', {
     </div>
     <button
         v-on:click="addToCart"
-        :disabled="!inStock"
+        :disabled="!inStock" 
         :class="{disabledButton: !inStock }"
     >
         Add to cart</button>
@@ -215,7 +249,7 @@ Vue.component('product', {
                     variantId: 2235,
                     variantColor: 'blue',
                     variantImage: "./assets/vmSocks-blue-onWhite.jpg",
-                    variantQuantity: 0,
+                    variantQuantity: 1,
 
                 }
             ],
@@ -226,16 +260,27 @@ Vue.component('product', {
     mounted() {
         eventBus.$on('review-submitted', productReview => {
             this.reviews.push(productReview)
-        })
+        });
+        eventBus.$on('return-to-stock', (id) => {
+            let variant = this.variants.find((variant) => variant.variantId === id)
+            if (variant) {
+                variant.variantQuantity += 1;
+            }
+        });
     },
 
     methods: {
+
         addToCart() {
-            this.$emit('add-to-cart',
-                this.variants[this.selectedVariant].variantId);
+            if (this.variants[this.selectedVariant].variantQuantity > 0) {
+                this.variants[this.selectedVariant].variantQuantity -= 1;
+            this.$emit('add-to-cart', this.variants[this.selectedVariant].variantId);
+            }
         },
         removeToCart() {
-            this.$emit('remove-to-cart');
+            const currentVariant = this.variants[this.selectedVariant];
+            currentVariant.variantQuantity +=1;
+                this.$emit('remove-to-cart', currentVariant.variantId);
         },
         updateProduct(index) {
             this.selectedVariant = index;
@@ -290,7 +335,7 @@ let app = new Vue({
         },
         removeToCart() {
             this.cart.pop();
-        }
+            }
     }
 })
 
