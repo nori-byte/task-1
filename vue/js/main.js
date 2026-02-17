@@ -5,6 +5,14 @@ Vue.component('product-tabs', {
         reviews: {
             type: Array,
             required: true
+        },
+        shipping: {
+            type:String, Number,
+            required: true
+        },
+        details: {
+            type: Array,
+            required: true
         }
     },
     template: `
@@ -30,11 +38,20 @@ Vue.component('product-tabs', {
        <div v-show="selectedTab === 'Make a Review'">
              <product-review></product-review>
        </div>
+     
+     <div v-show="selectedTab === 'Shipping'">
+     <p v-if="shipping === 'Free'"> You have premium snipping!</p>
+     <p v-else>Standart shipping rate</p>
+     </div>
+     
+     <div v-show="selectedTab === 'Details'">
+     <p>Details: {{ details }}</p>
+     </div>
      </div>
 `,
     data() {
         return {
-            tabs: ['Reviews', 'Make a Review'],
+            tabs: ['Reviews', 'Make a Review', 'Shipping', 'Details'],
             selectedTab: 'Reviews'
         }
     },
@@ -106,7 +123,6 @@ Vue.component('product-review', {
                     rating: this.rating,
                     value: this.value,
                 }
-                // this.$emit('review-submitted', productReview)
                 eventBus.$emit('review-submitted', productReview);
                 this.name = null
                 this.review = null
@@ -139,8 +155,7 @@ Vue.component('product', {
         </div>
         <div class="product-info">
             <h1>{{ title }}</h1>
-            <p>Shipping: {{ shipping }}</p>
-            <p>details: {{ details }}</p>
+<!--            <p>Shipping: {{ shipping }}</p>-->
             <a :href="link"> More products like this</a>
             <p v-if="inStock">In stock</p>
             <p v-else :class="{ outOfStock: !inStock || inventory <= 0 }">Out of Stock</p>
@@ -170,7 +185,11 @@ Vue.component('product', {
         Add to cart</button>
         </div>
 <div>
-<product-tabs :reviews="reviews"></product-tabs>
+<product-tabs 
+:reviews="reviews"
+:shipping="shipping"
+:details="details">
+</product-tabs>
 
 `,
     data() {
