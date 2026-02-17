@@ -6,27 +6,29 @@ Vue.component('cart', {
             type: Array,
             required: true
         },
-        premium: {
-            type:Boolean,
-            required: true
-        },
-        products: {
-            type: Array,
-            required: true
-        }
     },
     template: `
+<!--        <ul>-->
+<!--                <span class="tab-buttons"-->
+<!--                    :class="{ activeTab: selectedTab === tab }"-->
+<!--                    v-for="(tab, index) in tabs"-->
+<!--                    :key="index"-->
+<!--                    @click="selectedTab = tab"-->
+<!--                >{{ tab }}</span>-->
+<!--            </ul>-->
      <div class="cart">
      <h2>Корзинка</h2>
-     <div v-for="(id,index) in cartItems :key=index class="cart-item">
-<!--     <img :src="variant.variantImage" class="cart-image">-->
-        <p>{{variantImage}}</p>
-        <p>{{variantQuantity}}</p>
-        <p>{{price}}</p>
-        <p>{{shipping}}</p>
+     <div v-if="cartItems.length === 0">
+                    <p>Корзина пуста</p>
+                </div>
+                <div v-else>
+        <div v-for="(id, index, variantQuantity) in cartItems" :key="index" class="cart-item">
+            <p>Товар с ID: {{ id }} добавлен в корзину!</p>
+            <p>{{price}}</p>
+            <p>Количество: {{ variantQuantity }}</p>
+                   </div>
+        <p>Всего товаров: {{ cartItems.length }}</p>
      </div>
-     <p>Details: {{ details }}</p>
-</div>
 `,
     data() {
         return {
@@ -328,10 +330,11 @@ let app = new Vue({
         premium: true,
         details:true,
         cart: [],
+        products: [],
     },
     methods: {
-        updateCart(id) {
-            this.cart.push(id);
+        updateCart(item) {
+            this.cart.push(item);
         },
         removeToCart() {
             this.cart.pop();

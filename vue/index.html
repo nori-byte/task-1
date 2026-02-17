@@ -15,11 +15,9 @@
     <div class="cart">
         <p>Cart({{cart.length}})</p>
     </div>
+    <cart :cart-items="cart" :premium="premium" :products="products"></cart>
     <product :premium="premium" @add-to-cart="updateCart" @remove-to-cart="removeToCart"></product>
     <product-details :details="details"></product-details>
-<!--    <cart :cart-items="cart"-->
-<!--          :premium="premium"-->
-<!--          :variants="variants"></cart>-->
 </div>
 </body>
 </html>
