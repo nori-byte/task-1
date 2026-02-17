@@ -1,3 +1,5 @@
+let eventBus = new Vue()
+
 Vue.component('product-tabs', {
     props: {
         reviews: {
@@ -21,11 +23,12 @@ Vue.component('product-tabs', {
            <p>{{ review.name }}</p>
            <p>Rating: {{ review.rating }}</p>
            <p>{{ review.review }}</p>
+           <p>{{ review.value }}</p>
            </li>
          </ul>
        </div>
        <div v-show="selectedTab === 'Make a Review'">
-         <product-review @review-submitted="addReview"></product-review>
+             <product-review></product-review>
        </div>
      </div>
 `,
@@ -35,12 +38,6 @@ Vue.component('product-tabs', {
             selectedTab: 'Reviews'
         }
     },
-    methods: {
-        addReview(productReview) {
-            this.$emit('review-submitted', productReview);
-        }
-    },
-
 });
 Vue.component('product-review', {
     template: `
@@ -109,7 +106,8 @@ Vue.component('product-review', {
                     rating: this.rating,
                     value: this.value,
                 }
-                this.$emit('review-submitted', productReview)
+                // this.$emit('review-submitted', productReview)
+                eventBus.$emit('review-submitted', productReview);
                 this.name = null
                 this.review = null
                 this.rating = null
@@ -172,23 +170,7 @@ Vue.component('product', {
         Add to cart</button>
         </div>
 <div>
-<!--            <h2>Reviews</h2>-->
-<!--            <p v-if="!reviews.length">There are no reviews yet.</p>-->
-<!--            <ul>-->
-<!--              <li v-for="review in reviews">-->
-<!--              <p>{{ review.name }}</p>-->
-<!--              <p>Rating: {{ review.rating }}</p>-->
-<!--              <p>{{ review.review }}</p>-->
-<!--              <p>{{ review.value }}</p>-->
-<!--              </li>-->
-<!--            </ul>-->
-<!--           </div> <product-review @review-submitted="addReview"></product-review>-->
-<!--       </div>-->
-<product-tabs 
-    :reviews="reviews" 
-    @review-submitted="addReview">
-    
-</product-tabs>
+<product-tabs :reviews="reviews"></product-tabs>
 
 `,
     data() {
@@ -222,6 +204,12 @@ Vue.component('product', {
             sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
         }
     },
+    mounted() {
+        eventBus.$on('review-submitted', productReview => {
+            this.reviews.push(productReview)
+        })
+    },
+
     methods: {
         addToCart() {
             this.$emit('add-to-cart',
@@ -234,10 +222,6 @@ Vue.component('product', {
             this.selectedVariant = index;
             console.log(index);
         },
-        addReview(productReview) {
-            this.reviews.push(productReview)
-        }
-
     },
 
     computed: {
@@ -250,9 +234,6 @@ Vue.component('product', {
             inStock(){
                 return this.variants[this.selectedVariant].variantQuantity
             },
-            // sale() {
-            //     return this.brand + ' ' + this.product + ' ' + this.onSale;
-            // },
         sale() {
             if (this.onSale) {
                 return this.brand + ' ' + this.product + ' сейчас участвует в распродаже!';
@@ -267,9 +248,7 @@ Vue.component('product', {
                     return 2.99
                 }
             }
-
         }
-
 })
 Vue.component('product-details', {
     props: {
