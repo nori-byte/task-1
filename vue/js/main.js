@@ -6,33 +6,64 @@ Vue.component('cart', {
             type: Array,
             required: true
         },
+        premium: {
+            type: Boolean,
+            required: true
+        }
     },
     template: `
-<!--        <ul>-->
-<!--                <span class="tab-buttons"-->
-<!--                    :class="{ activeTab: selectedTab === tab }"-->
-<!--                    v-for="(tab, index) in tabs"-->
-<!--                    :key="index"-->
-<!--                    @click="selectedTab = tab"-->
-<!--                >{{ tab }}</span>-->
-<!--            </ul>-->
-     <div class="cart">
-     <h2>Корзинка</h2>
-     <div v-if="cartItems.length === 0">
-                    <p>Корзина пуста</p>
+        <div class="cart">
+            <h2>Корзинка</h2>          
+            <div v-if="cartItems.length === 0">
+                <p>Корзинка пуста</p>
+            </div> 
+            <div v-else>
+                <div v-for="(id, index) in cartItems" :key="index" class="cart-item">
+                    <img :src="getImage(id)" alt="товар" style="width: 100px; height: 100px;">
+                    <p>Всего товаров: {{ getTotalItems() }}</p>
+                    <p>Цена за 1 единицу: {{price}}$</p>
                 </div>
-                <div v-else>
-        <div v-for="(id, index, variantQuantity) in cartItems" :key="index" class="cart-item">
-            <p>Товар с ID: {{ id }} добавлен в корзину!</p>
-            <p>{{price}}</p>
-            <p>Количество: {{ variantQuantity }}</p>
-                   </div>
-        <p>Всего товаров: {{ cartItems.length }}</p>
-     </div>
-`,
+                <div class="cart-total">
+                    <p>Общая стоимость: {{ getTotalPrice() }}$</p>
+                    <p>Доставка: {{ getShipping() }}</p>
+                    <p>К оплате: {{ getTotalWithShipping() }}$</p>
+                </div>
+            </div>
+        </div>
+    `,
     data() {
         return {
-            price:25
+            price: 25,
+
+        }
+    },
+    methods: {
+        getImage(id) {
+            if (id === 2234) return "./assets/vmSocks-green-onWhite.jpg";
+            if (id === 2235) return "./assets/vmSocks-blue-onWhite.jpg";
+        },
+        getTotalItems() {
+            return this.cartItems.length;
+        },
+        getTotalPrice() {
+            return this.cartItems.length * 25;
+        },
+        getShipping() {
+            if (this.premium) {
+                return 'Бесплатно';
+            } else {
+                return '$2.99';
+            }
+        },
+        getShippingCost() {
+            if (this.premium) {
+                return 0;
+            } else {
+                return 2.99;
+            }
+        },
+        getTotalWithShipping() {
+            return this.getTotalPrice() + this.getShippingCost();
         }
     },
 });
@@ -333,8 +364,8 @@ let app = new Vue({
         products: [],
     },
     methods: {
-        updateCart(item) {
-            this.cart.push(item);
+        updateCart(id) {
+            this.cart.push(id);
         },
         removeToCart() {
             this.cart.pop();
